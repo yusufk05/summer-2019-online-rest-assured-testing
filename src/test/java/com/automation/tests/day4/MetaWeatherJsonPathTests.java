@@ -119,10 +119,52 @@ public class MetaWeatherJsonPathTests {
                     body("title", contains(expectedCities.toArray()));
     }
 
+    //            * TASK
+    //* Given accept type is JSON
+    //* When users sends a GET request to "/search"
+//            * And query parameter is 'Las'
+//            * Then verify that every item in payload has location_type City
 
+    @Test
+    @DisplayName("Verify that every item in payload has 'location_type' in City")
+    public void test4(){
+        given().
+                accept(ContentType.JSON).
+                queryParam("query", "Las").
+        when().
+                get("/search").
+        then().
+                assertThat().
+                body("location_type", everyItem(is("City")))
+        .log().all(true);
+    }
 
+//            * Given accept type is JSON
+//            * When users sends a GET request to "/location/{woid}"
+//            * And path parameter is '44418'
+//            * Then verify following that payload contains weather forecast sources
+//            * |BBC                 |
+//            * |Forecast.io         |
+//            * |HAMweather          |
+//            * |Met Office          |
+//            * |OpenWeatherMap      |
+//            * |Weather Underground |
+//            * |World Weather Online|
+    @Test
+    @DisplayName("Verify that following payload contains weather conditions")
+    public void test5(){
+        List<String> expected = Arrays.asList("BBC", "Forecast.io", "HAMweather", "Met Office",
+                                            "OpenWeatherMap", "Weather Underground", "World Weather Online");
 
-
+        Response response = given().
+                                accept(ContentType.JSON).
+                                pathParam("woeid", 44418).
+                            when().get("/location/{woeid}");
+        JsonPath jsonPath = response.jsonPath();
+        List<String> actual = jsonPath.getList("sources.title");
+        System.out.println(actual);
+        assertEquals(expected, actual);
+    }
 
 
 
